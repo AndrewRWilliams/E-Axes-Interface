@@ -9,33 +9,37 @@
     </head>
     <body>
         <div class="chat-container">
-            <!-- Toggle sidebar button fixed to the top left -->
+            <!-- Left Sidebar for saved chats -->
             <button id="toggle-sidebar">☰</button>
-            <!-- Toggle sidebar button -->
-
-            <!-- Sidebar for saved chats -->
             <div class="sidebar" id="sidebar">
                 <div class="sidebar-header">
                     <h2>Saved Chats</h2>
                 </div>
-                <ul id="chat-list">
-                    <!-- Chat list will be dynamically added here -->
-                </ul>
+                <ul id="chat-list"></ul>
             </div>
 
-            <!-- Chat area -->
+            <!-- Main Chat Area -->
             <div class="chat-area" id="chat-area">
                 <div class="chat-header">
                     <h1>Chat Interface</h1>
                     <button id="new-chat-button">New Chat</button>
                 </div>
-                <div class="chat-box" id="chat-box">
-                    <!-- Chat messages will go here -->
-                </div>
+                <div class="chat-box" id="chat-box"></div>
                 <div class="chat-input-area">
                     <input type="text" id="chat-input" placeholder="Type your message..." />
                     <button id="send-button">Send</button>
                 </div>
+            </div>
+
+            <!-- Right Sidebar for sources -->
+            <div class="right-sidebar" id="right-sidebar">
+                <button id="close-right-sidebar">✖</button>
+                <h2>Sources</h2>
+                <ul id="source-list">
+                    <li>Source 1: Placeholder Source A</li>
+                    <li>Source 2: Placeholder Source B</li>
+                    <li>Source 3: Placeholder Source C</li>
+                </ul>
             </div>
         </div>
         <script src="script.js"></script>

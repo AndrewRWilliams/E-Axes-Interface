@@ -1,7 +1,8 @@
-const chats = [];  // Array to store all chat sessions
+// script.js
+let chats = [];  // Array to store all chat sessions
 let currentChat = [];  // Array to store the current chat
 let chatCount = 0;  // Track the number of chats
-let isSidebarVisible = true;  // Track whether the sidebar is visible
+let isRightSidebarVisible = false;  // Track the visibility of the right sidebar
 
 const chatBox = document.getElementById("chat-box");
 const chatInput = document.getElementById("chat-input");
@@ -9,20 +10,27 @@ const sendButton = document.getElementById("send-button");
 const sidebar = document.getElementById("sidebar");
 const newChatButton = document.getElementById("new-chat-button");
 const toggleSidebarButton = document.getElementById("toggle-sidebar");
+const rightSidebar = document.getElementById("right-sidebar");
+const rightSidebarClose = document.getElementById("close-right-sidebar");
+const sourceList = document.getElementById("source-list");
 
 sendButton.addEventListener("click", sendMessage);
 newChatButton.addEventListener("click", startNewChat);
 toggleSidebarButton.addEventListener("click", toggleSidebar);
+rightSidebarClose.addEventListener("click", toggleRightSidebar);
 
 function toggleSidebar() {
-  isSidebarVisible = !isSidebarVisible;
+  sidebar.classList.toggle("hidden");
+  document.querySelector(".chat-area").classList.toggle("expanded");
+}
 
-  if (isSidebarVisible) {
-    sidebar.classList.remove("hidden");
-    document.querySelector(".chat-area").classList.remove("expanded");
+function toggleRightSidebar() {
+  isRightSidebarVisible = !isRightSidebarVisible;
+  if (isRightSidebarVisible) {
+    rightSidebar.classList.add("visible");
+    showAllSources(); // Show all sources in the right sidebar when it becomes visible
   } else {
-    sidebar.classList.add("hidden");
-    document.querySelector(".chat-area").classList.add("expanded");
+    rightSidebar.classList.remove("visible");
   }
 }
 
@@ -68,18 +76,47 @@ function clearLoadingMessage() {
   }
 }
 
-/* Phase 1: Show a set of 3 placeholder sources in a box */
+/* Phase 1: Show a set of 10 placeholder sources in a box and select 3 of them */
 function phaseOneSources() {
-  const sources = [
+  const allSources = [
     "Source 1: Placeholder Source A",
     "Source 2: Placeholder Source B",
-    "Source 3: Placeholder Source C"
+    "Source 3: Placeholder Source C",
+    "Source 4: Placeholder Source D",
+    "Source 5: Placeholder Source E",
+    "Source 6: Placeholder Source F",
+    "Source 7: Placeholder Source G",
+    "Source 8: Placeholder Source H",
+    "Source 9: Placeholder Source I",
+    "Source 10: Placeholder Source J"
+  ];
+
+  // Select 3 sources from the list of 10
+  const sources = [
+    allSources[0],
+    allSources[3],
+    allSources[6]
   ];
 
   const messageBubble = document.createElement("div");
   messageBubble.classList.add("message-bubble", "bot-response", "box");
   messageBubble.innerHTML = "<b>Sources:</b><br>" + sources.join("<br>");
-  chatBox.appendChild(messageBubble);
+
+  // Add the button to open the right sidebar, position it to the right of the Phase 1 box
+  const button = document.createElement("button");
+  button.classList.add("view-sources-button");
+  button.innerText = "View Sources";
+  button.addEventListener("click", toggleRightSidebar);
+  button.style.marginLeft = "10px";  // Add some space between the box and the button
+
+  const container = document.createElement("div");
+  container.classList.add("phase-container");
+  container.style.display = "flex";  // Use flex to align the button to the right of the box
+  container.style.alignItems = "center";  // Vertically align items
+  container.appendChild(messageBubble);
+  container.appendChild(button);
+
+  chatBox.appendChild(container);
   chatBox.scrollTop = chatBox.scrollHeight;
 
   // Save to current chat
@@ -93,9 +130,46 @@ function phaseOneSources() {
   }, 1000);
 }
 
-/* Phase 2: Show a set of 10 placeholder facts in a box */
+/* Show all sources in the right sidebar and make them selectable */
+function showAllSources() {
+  const allSources = [
+    "Source 1: Placeholder Source A",
+    "Source 2: Placeholder Source B",
+    "Source 3: Placeholder Source C",
+    "Source 4: Placeholder Source D",
+    "Source 5: Placeholder Source E",
+    "Source 6: Placeholder Source F",
+    "Source 7: Placeholder Source G",
+    "Source 8: Placeholder Source H",
+    "Source 9: Placeholder Source I",
+    "Source 10: Placeholder Source J"
+  ];
+
+  sourceList.innerHTML = "";  // Clear the previous list
+
+  allSources.forEach((source, index) => {
+    const listItem = document.createElement("li");
+    listItem.innerText = source;
+    listItem.classList.add("selectable-source");
+    listItem.addEventListener("click", () => selectSource(source));
+    sourceList.appendChild(listItem);
+  });
+}
+
+/* Function to handle source selection from the right sidebar */
+function selectSource(selectedSource) {
+  // Update the Phase 1 sources box with the selected source
+  const sourcesBox = document.querySelector(".phase-container .box");
+  if (sourcesBox) {
+    sourcesBox.innerHTML += `<br>${selectedSource}`;
+  }
+  // Save the updated sources to the current chat
+  currentChat.push({ sender: "bot", text: sourcesBox.innerHTML });
+}
+
+/* Phase 2: Show a set of 10 placeholder facts in a box and add a button to insert new facts */
 function phaseTwoFacts() {
-  const facts = [
+  let facts = [
     "Fact 1: Placeholder fact from Source A",
     "Fact 2: Placeholder fact from Source B",
     "Fact 3: Placeholder fact from Source C",
@@ -111,7 +185,30 @@ function phaseTwoFacts() {
   const messageBubble = document.createElement("div");
   messageBubble.classList.add("message-bubble", "bot-response", "box");
   messageBubble.innerHTML = "<b>Facts Extracted:</b><br>" + facts.join("<br>");
-  chatBox.appendChild(messageBubble);
+
+  // Add button to insert new facts
+  const insertFactButton = document.createElement("button");
+  insertFactButton.classList.add("insert-fact-button");
+  insertFactButton.innerText = "Insert New Fact";
+  insertFactButton.style.marginLeft = "10px";  // Add some space between the box and the button
+  insertFactButton.style.alignSelf = "center";  // Center the button vertically
+  insertFactButton.addEventListener("click", () => {
+    const newFact = prompt("Enter a new fact:");
+    if (newFact) {
+      facts.push(newFact);
+      messageBubble.innerHTML = "<b>Facts Extracted:</b><br>" + facts.join("<br>");
+      currentChat.push({ sender: "bot", text: messageBubble.innerHTML }); // Update current chat
+    }
+  });
+
+  const container = document.createElement("div");
+  container.classList.add("phase-container");
+  container.style.display = "flex";  // Use flex to align items
+  container.style.alignItems = "center";  // Align items at the center vertically
+  container.appendChild(messageBubble);
+  container.appendChild(insertFactButton);
+
+  chatBox.appendChild(container);
   chatBox.scrollTop = chatBox.scrollHeight;
 
   // Save to current chat
@@ -155,6 +252,21 @@ function generateLipsum() {
   return "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.";
 }
 
+/* Start a new chat session */
+function startNewChat() {
+  if (currentChat.length > 0) {
+    saveChat();  // Save current chat before starting a new one
+  }
+
+  chatBox.innerHTML = "";  // Clear the chat box
+  currentChat = [];  // Reset the current chat session
+
+  // Reset the right sidebar visibility
+  if (isRightSidebarVisible) {
+    toggleRightSidebar();
+  }
+}
+
 /* Save the current chat session and reset */
 function saveChat() {
   chats.push(currentChat);
@@ -165,7 +277,7 @@ function saveChat() {
 
 /* Update the sidebar with saved chats */
 function updateSidebar() {
-  const chatList = document.createElement("ul");
+  const chatList = document.getElementById("chat-list");
   chatList.innerHTML = "";  // Clear previous chat list
 
   chats.forEach((chat, index) => {
@@ -174,9 +286,6 @@ function updateSidebar() {
     listItem.addEventListener("click", () => displayChat(index));
     chatList.appendChild(listItem);
   });
-
-  sidebar.innerHTML = "";  // Clear previous content
-  sidebar.appendChild(chatList);
 }
 
 /* Display a selected chat */
@@ -190,23 +299,5 @@ function displayChat(chatIndex) {
     messageBubble.innerHTML = message.text;
     chatBox.appendChild(messageBubble);
   });
-
-  chatBox.scrollTop = chatBox.scrollHeight;  // Auto-scroll to the bottom
+  chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-/* Start a new chat session */
-function startNewChat() {
-  if (currentChat.length > 0) {
-    saveChat();  // Save current chat before starting a new one
-  }
-
-  chatBox.innerHTML = "";  // Clear the chat box
-  currentChat = [];  // Reset the current chat session
-}
-
-/* Optional: Send message on Enter key */
-chatInput.addEventListener("keydown", function (event) {
-  if (event.key === "Enter") {
-    sendMessage();
-  }
-});
