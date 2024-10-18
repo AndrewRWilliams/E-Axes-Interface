@@ -9,16 +9,25 @@
     </head>
     <body>
         <div class="chat-container">
-            <!-- Sidebar (optional) -->
-            <div class="sidebar">
-                <h2>Menu</h2>
-                <!-- Add menu items here -->
+            <!-- Toggle sidebar button fixed to the top left -->
+            <button id="toggle-sidebar">☰</button>
+            <!-- Toggle sidebar button -->
+
+            <!-- Sidebar for saved chats -->
+            <div class="sidebar" id="sidebar">
+                <div class="sidebar-header">
+                    <h2>Saved Chats</h2>
+                </div>
+                <ul id="chat-list">
+                    <!-- Chat list will be dynamically added here -->
+                </ul>
             </div>
 
             <!-- Chat area -->
-            <div class="chat-area">
+            <div class="chat-area" id="chat-area">
                 <div class="chat-header">
                     <h1>Chat Interface</h1>
+                    <button id="new-chat-button">New Chat</button>
                 </div>
                 <div class="chat-box" id="chat-box">
                     <!-- Chat messages will go here -->
