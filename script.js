@@ -132,28 +132,65 @@ function phaseOneSources() {
 
 /* Show all sources in the right sidebar and make them selectable */
 function showAllSources() {
-  const allSources = [
-    "Source 1: Placeholder Source A",
-    "Source 2: Placeholder Source B",
-    "Source 3: Placeholder Source C",
-    "Source 4: Placeholder Source D",
-    "Source 5: Placeholder Source E",
-    "Source 6: Placeholder Source F",
-    "Source 7: Placeholder Source G",
-    "Source 8: Placeholder Source H",
-    "Source 9: Placeholder Source I",
-    "Source 10: Placeholder Source J"
-  ];
+    const allSources = [
+        "Source 1: Placeholder Source A",
+        "Source 2: Placeholder Source B",
+        "Source 3: Placeholder Source C",
+        "Source 4: Placeholder Source D",
+        "Source 5: Placeholder Source E",
+        "Source 6: Placeholder Source F",
+        "Source 7: Placeholder Source G",
+        "Source 8: Placeholder Source H",
+        "Source 9: Placeholder Source I",
+        "Source 10: Placeholder Source J"
+    ];
 
-  sourceList.innerHTML = "";  // Clear the previous list
+    sourceList.innerHTML = "";  // Clear the previous list
 
-  allSources.forEach((source, index) => {
-    const listItem = document.createElement("li");
-    listItem.innerText = source;
-    listItem.classList.add("selectable-source");
-    listItem.addEventListener("click", () => selectSource(source));
-    sourceList.appendChild(listItem);
-  });
+    allSources.forEach((source, index) => {
+        const listItem = document.createElement("li");
+        listItem.innerText = source;
+        listItem.classList.add("selectable-source");
+        listItem.addEventListener("click", () => {
+            if (isSourceSelected(source)) {
+                removeSource(source);
+            } else {
+                selectSource(source);
+            }
+        });
+        sourceList.appendChild(listItem);
+    });
+}
+
+/* Check if a source is already selected in the Phase 1 box */
+function isSourceSelected(source) {
+    const sourcesBox = document.querySelector(".phase-container .box");
+    if (sourcesBox) {
+        const sources = sourcesBox.innerHTML.split("<br>");
+        return sources.includes(source);
+    }
+    return false;
+}
+
+/* Remove a selected source from the Phase 1 box */
+function removeSource(source) {
+    const sourcesBox = document.querySelector(".phase-container .box");
+    if (sourcesBox) {
+        const sources = sourcesBox.innerHTML.split("<br>");
+        const updatedSources = sources.filter((s) => s !== source);
+        sourcesBox.innerHTML = updatedSources.join("<br>");
+    }
+}
+
+/* Function to handle source selection from the right sidebar */
+function selectSource(selectedSource) {
+    // Update the Phase 1 sources box with the selected source
+    const sourcesBox = document.querySelector(".phase-container .box");
+    if (sourcesBox) {
+        sourcesBox.innerHTML += `<br>${selectedSource}`;
+    }
+    // Save the updated sources to the current chat
+    currentChat.push({ sender: "bot", text: sourcesBox.innerHTML });
 }
 
 /* Function to handle source selection from the right sidebar */
